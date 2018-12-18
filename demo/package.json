@@ -1,11 +1,14 @@
 {
   "nativescript": {
-    "id": "org.nativescript.demo"
+    "id": "org.nativescript.demo",
+    "tns-ios": {
+      "version": "3.2.0"
+    }
   },
   "dependencies": {
+    "nativescript-tglib": "file:../src",
     "nativescript-theme-core": "^1.0.4",
     "nativescript-unit-test-runner": "^0.3.4",
-    "nativescript-tglib": "file:../src",
     "tns-core-modules": "^5.0.1"
   },
   "devDependencies": {
