@@ -1,7 +1,7 @@
 {
   "name": "nativescript-tglib",
-  "version": "0.1.0",
-  "description": "Your awesome NativeScript plugin.",
+  "version": "0.2.0",
+  "description": "Telegram Client NativeScript plugin.",
   "main": "tglib",
   "typings": "index.d.ts",
   "nativescript": {
@@ -37,8 +37,8 @@
     "Bot"
   ],
   "author": {
-    "name": "Your Name",
-    "email": "youremail@yourdomain.com"
+    "name": "Arpit Srivastava",
+    "email": "arpit2438735@gmail.com"
   },
   "bugs": {
     "url": "https://github.com/arpit2438735/nativescript-tglib/issues"
