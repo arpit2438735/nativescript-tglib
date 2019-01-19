@@ -1,6 +1,6 @@
 {
   "name": "nativescript-tglib",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Your awesome NativeScript plugin.",
   "main": "tglib",
   "typings": "index.d.ts",
