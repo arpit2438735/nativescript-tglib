@@ -1,5 +1,6 @@
 *.map
 *.ts
+*.dylib
 !*.d.ts
 tsconfig.json
 scripts/*
