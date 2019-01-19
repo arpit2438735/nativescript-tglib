@@ -53,5 +53,6 @@ declare interface Options {
         system_language_code: string;
         application_version: string;
         device_model: string;
+        system_version:string;
     };
 }

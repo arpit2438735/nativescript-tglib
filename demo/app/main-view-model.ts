@@ -29,6 +29,6 @@ export class HelloWorldModel extends Observable {
       'limit': 100,
     });
 
-    console.log(chats);
+    console.log("chats"+ chats);
   }
 }

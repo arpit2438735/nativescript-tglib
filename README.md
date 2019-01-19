@@ -88,6 +88,25 @@ const chats = await client.fetch({
   'limit': 100,
 })
 ```
+
+##### `client.send(query)` -> Promise -> Object
+
+This API is provided by TDLib, you can use this API to send asynchronous message to Telegram.
+
+```js
+await client.send({
+  '@type': 'sendMessage',
+  'chat_id': -123456789,
+  'input_message_content': {
+    '@type': 'inputMessageText',
+    'text': {
+      '@type': 'formattedText',
+      'text': '👻',
+    },
+  },
+})
+```
+
 ## License
 
 Apache License Version 2.0, January 2004

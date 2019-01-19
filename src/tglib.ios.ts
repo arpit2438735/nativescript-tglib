@@ -1,10 +1,11 @@
 /// <reference path="./platforms/ios/TDJSON.d.ts" />
 import { knownFolders, Folder, path } from "tns-core-modules/file-system";
-
 import {
     InvalidCallbackError,
     ClientFetchError,
 } from './errors';
+
+import {version} from './package.json';
 
 const convertToJSON = (data:NSDictionary<string, any>):JSON => {
     let jsonData = NSJSONSerialization.dataWithJSONObjectOptionsError(data, 0);
@@ -23,7 +24,8 @@ export class Tglib {
             use_secret_chats: true,
             system_language_code: 'en',
             application_version: '1.0',
-            device_model: 'ios'
+            device_model: 'ios',
+            system_version: version
         }
     };
     fetching: Object = {};
@@ -36,7 +38,6 @@ export class Tglib {
     ready:Promise<any>;
 
     documents: Folder = <Folder>knownFolders.documents();
-    folder: Folder = <Folder>this.documents.getFolder('__tglib__');
 
     constructor(options:object={}) {
         this.options = {
@@ -56,15 +57,15 @@ export class Tglib {
     public registerCallback(key, callback): void {
         const validNames = Object.keys(this.callbacks);
         if (validNames.indexOf(key) < 0) {
-            throw new InvalidCallbackError(key)
+            throw new InvalidCallbackError(key);
         }
         if (key === 'td:getInput') {
             const result = callback({}) || {};
             if (typeof result.then !== 'function') {
-                throw new InvalidCallbackError(key)
+                throw new InvalidCallbackError(key);
             }
         }
-        this.callbacks[key] = callback
+        this.callbacks[key] = callback;
     }
 
     public destroy() {
@@ -72,7 +73,6 @@ export class Tglib {
             this.client.destroy();
         }
     }
-
 
     public async loop() {
         const update = await this.receive();
@@ -92,6 +92,8 @@ export class Tglib {
                     break;
             }
         }
+
+        this.loop();
     }
 
     public async fetch(query) {
@@ -109,6 +111,31 @@ export class Tglib {
         return receiveUpdate;
     }
 
+    public send(query):Promise<any> {
+        return new Promise((resolve) => {
+            let callback = (response):void => {
+                if (!response) {
+                    return resolve(null);
+                }
+                resolve(convertToJSON(response));
+            };
+
+            return this.client.queryAsyncWithQueryF(query, callback);
+        })
+    }
+
+    public receive():Promise<any> {
+        return new Promise((resolve) => {
+            let callback = (response):void => {
+                if (!response) {
+                    return resolve(null);
+                }
+                resolve(convertToJSON(response));
+            };
+
+            return this.client.runWithUpdateHandler(callback);
+        });
+    }
 
     async handleAuth(update) {
         const { auth: { type, value } } = this.options;
@@ -119,8 +146,8 @@ export class Tglib {
                     'parameters': {
                         ...this.options.tdlibParameters,
                         '@type': 'tdlibParameters',
-                        'database_directory': path.normalize(`${this.folder}database`),
-                        'files_directory': path.normalize(`${this.folder}files`),
+                        'database_directory': path.join(this.documents.path, '__tdjson__', `database`),
+                        'files_directory': path.join(this.documents.path, '__tdjson__', 'files'),
                         'api_id': this.options.apiId,
                         'api_hash': this.options.apiHash,
                     },
@@ -234,37 +261,16 @@ export class Tglib {
 
         switch (update['@type']) {
             case 'updateOption': {
+                if (update['name'] === 'my_id' && update['value']['@type'] === 'optionValueEmpty') {
+                    this.client.destroy();
+                    this.client = null;
+                    break
+                }
                 break;
             } default: {
                 this.callbacks['td:update'].call(null, update);
 
             }
         }
-    }
-
-    private send(query):Promise<any> {
-        return new Promise((resolve) => {
-            let callback = (response):void => {
-                if (!response) {
-                    return resolve(null)
-                }
-                resolve(convertToJSON(response));
-            };
-
-            return this.client.queryAsyncWithQueryF(query, callback);
-        })
-    }
-
-    private receive():Promise<any> {
-        return new Promise((resolve) => {
-            let callback = (response):void => {
-                if (!response) {
-                    return resolve(null);
-                }
-                resolve(convertToJSON(response));
-            };
-
-            return this.client.runWithUpdateHandler(callback);
-        });
     }
 }
