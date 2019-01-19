@@ -32,7 +32,9 @@
     "NativeScript",
     "JavaScript",
     "Android",
-    "iOS"
+    "iOS",
+    "Telegram",
+    "Bot"
   ],
   "author": {
     "name": "Your Name",
